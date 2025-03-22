@@ -1,0 +1,179 @@
+* {
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Work Sans";
+  background-color: #1f1f1f;
+  min-width: 300px;
+}
+
+@font-face {
+  font-family: Work Sans;
+  src: url(/Work_Sans/WorkSans-VariableFont_wght.ttf);
+}
+
+@font-face {
+  font-family: Merriweather;
+  src: url(/Merriweather/Merriweather-Regular.ttf);
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+p, span, aside {
+  font-family: "Merriweather";
+}
+
+main {
+  min-height: calc(100vh - 14rem);
+  max-width: 100%;
+}
+
+/* Header and Outlet wrapper */
+div#content-wrapper {
+  position: relative;
+  min-height: calc(100vh - 7rem);
+}
+
+/* Header and Nav */
+header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  height: 7rem;
+  width: 100vw;
+  padding: 0 5%;
+  z-index: 100;
+  border-bottom: 1px solid #D98B22;
+  min-width: 300px;
+}
+
+header > a.logo {
+  color: #FFFAF0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+header > hr {
+  width: 150px;
+  max-width: 500px;
+  border: 1px solid rgba(120, 120, 120, .5);
+  
+}
+
+header > nav {
+  display: flex;
+  gap: .5rem;
+}
+
+header > nav a {
+  color: #FAEBD7;
+  text-decoration: none;
+}
+
+header > nav a:hover, header > nav a:active, header > nav a:focus {
+  text-decoration: underline;
+  color: #fffaf0;
+}
+
+header > a > img.profile {
+  position: absolute;
+  top: 3.25rem;
+  right: 5%;
+  height: 1.5rem;
+}
+
+header > img.profile:hover {
+  cursor: pointer;
+}
+
+/* Container for all pages */
+.container {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 4rem 0;
+  min-height: calc(100vh - 14rem);
+  width: 100%;
+}
+
+
+section.main {
+  width: 90%;
+  max-width: 500px;
+  height: fit-content;
+  color: #1f1f1f;
+}
+
+/* Error page */
+.error-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFFAF0;
+}
+
+section.error-main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+section.error-main p {
+  font-size: 1.125rem;
+}
+
+section.error-main a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 100%;
+  background-color: #D98B22;
+  color: #FFFAF0;
+  text-decoration: none;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-radius: 5px;
+}
+
+section.error-main a:hover {
+  background-color: #FAEBD7;
+  color: #D98B22;
+  border: 2px solid #D98B22;
+}
+
+section.error-main > p > span {
+  font-size: 1.5rem;
+}
+
+/* Footer */
+footer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  min-width: 300px;
+  height: 7rem;
+  z-index: 100;
+  border-top: 1px solid #000000;
+}
+
+footer a {
+  color: #FFFAF0;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+}

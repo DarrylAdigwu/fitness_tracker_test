@@ -1,0 +1,21 @@
+div.about-container {
+  padding: 0;
+  background-color: #FFFAF0;
+}
+
+div.banner {
+  margin: 0;
+  height: 30vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+div.banner > img {
+  width: 100%;
+}
+
+section.about-cta h1 {
+  margin: 0;
+  color: #D98B22;
+  font-size: 2rem;
+}

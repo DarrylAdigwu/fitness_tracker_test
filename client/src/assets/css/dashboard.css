@@ -1,0 +1,169 @@
+div.dash-container {
+  background-color: #FFFAF0;
+  align-content: start;
+}
+
+/* date button */
+div.dash-container > div.date {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #D98B22;
+  width: fit-content;
+  min-width: 200px;
+  height: 30px;
+  border-radius: 10px;
+  margin: 2rem 35%;
+  font-size: 1.5rem;
+}
+
+div.dash-container > div.date > span {
+  margin: 0 .75rem;
+  font-size: .875rem;
+  color: #FFFFFF;
+  min-width: fit-content;
+}
+
+div.dash-container > div.date > button {
+  background-color: transparent;
+  border: none;
+  color: #FFFFFF;
+  height: 100%;
+  padding: 0 .5rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* no schedule container */
+div.dash-container > div.no-schedule {
+  width: 90%;
+  max-width: 500px;
+  height: fit-content;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 6.75vh;
+}
+
+div.dash-container > div.no-schedule h1 {
+  width: 100%;
+  text-align: center;
+}
+
+div.dash-container > div.no-schedule button {
+  height: 50px;
+  width: 100%;
+  max-width: 500px;
+  background-color: #D98B22;
+  border: none;
+  color: #FFFFFF;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+div.dash-container > div.no-schedule button:active {
+  background-color: #FFFFFF;
+  color: #D98B22;
+  border: 1px solid #D98B22;
+  cursor: pointer;
+}
+
+/* Workout form */
+div.dash-container > div.workout-form {
+  display: none;
+  flex-wrap: wrap;
+  width: 90%;
+  max-width: 500px;
+  height: fit-content;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 4rem 0;
+  background-color: #FFFFFF;
+  border-radius: 6px;
+}
+
+div.workout-form form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  width: 100%;
+  max-width: 450px;
+  padding: 0 2rem;
+}
+
+div.workout-form h1 {
+  width: 100%;
+  text-align: center;
+  margin: 0 0 2rem 0;
+}
+
+div.workout-form input, div.workout-form button {
+  height: 40px;
+  padding: 0 .5rem;
+  border-radius: 5px;
+  border: 1px solid rgba(120, 120, 120, .5);
+  font-size: .875rem;
+}
+
+div.input-boxes {
+  display: flex;
+  width: 100%;
+}
+
+div.workout-form .workout-input {
+  width: 75%;
+}
+
+div.workout-form .rep-input {
+  width: 25%;
+  margin-left: .25rem;
+}
+
+div.workout-form > Form > div.exercise-btn-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: .25rem;
+}
+
+div.exercise-btn-container > div#add-exercise {
+  display: flex;
+  align-items: center;
+  justify-self: right;
+  width: fit-content;
+  height: 25px;
+  background: none;
+  color: #D98B22;
+  cursor: pointer;
+  font-size: .875rem;
+}
+
+div.exercise-btn-container > div#add-exercise:hover {
+  border-bottom: 1px solid #D98B22;
+}
+
+div.exercise-btn-container > div#add-exercise > img {
+  margin-right: .125rem;
+}
+
+
+div.workout-form > Form > #submit-exercise {
+  width: 100%;
+  margin-top: 1rem;
+  background-color: #D98B22;
+  color: #FFFFFF;
+}
+
+div.workout-form > Form > #submit-exercise:hover {
+  cursor: pointer;
+}
+
+
+div.workout-form > Form > #submit-exercise:active {
+  background-color: #FFFFFF;
+  color:#D98B22;
+  border: 1px solid #D98B22;
+  cursor: pointer;
+}
