@@ -1,6 +1,7 @@
-import React, { act, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Form, NavLink, useSubmit, useActionData, useNavigate } from "react-router";
 import "../assets/css/account.css"
+import { sendData } from "../../client-utils";
 
 /* Action function  */
 export async function action({ request }) {
@@ -10,35 +11,8 @@ export async function action({ request }) {
   const password = formData.get("password");
   const confirmPassword = formData.get("confirm-password");
 
-  // Send Form data to server
-  async function sendData() { 
-    try {
-      const response = await fetch("http://localhost:3000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username, 
-          password, 
-          confirmPassword
-        })
-      });
-      
-      /*if(!response.ok) {
-        throw new Error (`HTTP error! status: ${response.status}`);
-        }*/
-       
-       const responseData = await response.json();
-       return responseData
-       
-      } catch(err) {
-        console.error("Error:", err)
-        throw err;
-      }
-    }
-    
-  const sendFormData = await sendData();
+  // Send Form data to server 
+  const sendFormData = await sendData("register", username, password, confirmPassword);
   
   /**  Client side validation **/
   const errors = {};
@@ -103,14 +77,17 @@ export default function Register () {
           <input name="lastName" type="text" id="lastName" placeholder="Last Name" autoComplete="on"/> 
           */}
           <label htmlFor="username">Username:</label>
-            <input name="username" type="text" id="username" placeholder="Username" autoComplete="on" autoFocus  />
-              {actionData && key == "invalidUsername" || key == "invalidChar" ? <span className="invalid">{actionData[key]}</span> : null}
+          <input name="username" type="text" id="username" placeholder="Username" autoComplete="on" autoFocus  />
+          {actionData && key == "invalidUsername" || key == "invalidChar" ? <span className="invalid">{actionData[key]}</span> : null}
+          
           <label htmlFor="reg-password">Password:</label>
-            <input name="password" type="password" id="reg-password" placeholder="Password" autoComplete="off" />
-              {actionData && key == "invalidPassword" ? <span className="invalid">{actionData[key]}</span> : null}
+          <input name="password" type="password" id="reg-password" placeholder="Password" autoComplete="off" />
+          {actionData && key == "invalidPassword" ? <span className="invalid">{actionData[key]}</span> : null}
+          
           <label htmlFor="confirm-password">Confirm Password:</label>
-            <input name="confirm-password" type="password" id="confirm-password" placeholder="Password" autoComplete="off" />
-              {actionData && key == "invalidConfirmPass" ? <span className="invalid">{actionData[key]}</span> : null}
+          <input name="confirm-password" type="password" id="confirm-password" placeholder="Password" autoComplete="off" />
+          {actionData && key == "invalidConfirmPass" ? <span className="invalid">{actionData[key]}</span> : null}
+          
           <button type="submit"> {isSubmitting ? "Submitting..." : "Create account"}</button>
         </Form>
         <aside>Already have an account? <NavLink to="/login">Log in</NavLink></aside>

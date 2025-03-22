@@ -5,7 +5,7 @@ import cors from "cors";
 import helmet from "helmet";
 import session from "express-session";
 import MySQLStore from "express-mysql-session";
-import { db, registerUser } from "./db.js";
+import { db, registerUser, authLogin } from "./db.js";
 import { checkString } from "./utils.js";
 
 
@@ -116,7 +116,7 @@ server.route("/login")
 .post(async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-
+  const authorizeUser = await authLogin(username, password);
   if(req.method === 'POST') {
     // Validate login form
     if(!username) {
@@ -130,6 +130,30 @@ server.route("/login")
         {serverError: {"invalidPassword": "Password is required!"}}
       )
     }
+
+    if(await checkString(username) !== null) {
+      return res.status(400).json(
+        {serverError: {"invalidUsername": "Invalid username!"}}
+      )
+    }
+
+    if(authorizeUser === "Invalid username") {
+      return res.status(401).json(
+        {serverError: {"unauthUsername": "Username does not exist"}}
+      )
+    }
+
+    if(authorizeUser === "Password does not match") {
+      return res.status(401).json(
+        {serverError: {"unauthPassword": "Password does not match!"}}
+      )
+    }
+
+    //Return response to client for page redirect
+    return res.status(200).json(
+      {serverCheck: {"valid": "Data is valid"}}
+    )
+    
   }
 })
 

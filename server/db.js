@@ -65,8 +65,9 @@ export async function authLogin(username, password) {
     console.error("Error:" , err)
   }
 
+  
   if(!findUser[0]) {
-    return false;
+    return "Invalid username";
   } 
 
   // Verify password
@@ -83,13 +84,13 @@ export async function authLogin(username, password) {
   // Return boolean based on information
   if(findUser[0].username === username && hashResult) {
     return true;
-  } else {
-    return false;
-  }
-  
+  } else if(!hashResult){
+    return "Password does not match";
+  } 
+
 }
 
 //console.log(await authLogin("dadigwu", "hello"));
 //console.log(await getUserByID("1"));
-//console.log(await authLogin("dadigwu", "hello"));
+//console.log(await authLogin("dadigwu", "he"));
 //console.log(await registerUser(" dadigwu ", "hey"))

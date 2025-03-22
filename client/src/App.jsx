@@ -5,7 +5,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
 import Register, { action as registerAction} from './pages/Register';
-import Login from './pages/Login';
+import Login, { action as loginAction } from './pages/Login';
 import Error from './pages/Error';
 import Dashboard from './pages/profile/Dashboard';
 
@@ -29,6 +29,7 @@ const router = createBrowserRouter(createRoutesFromElements(
     <Route 
       path="login"
       element={<Login />}
+      action={loginAction}
     />
     <Route 
       path="dashboard"
