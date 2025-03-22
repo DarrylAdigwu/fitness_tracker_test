@@ -89,8 +89,3 @@ export async function authLogin(username, password) {
   } 
 
 }
-
-//console.log(await authLogin("dadigwu", "hello"));
-//console.log(await getUserByID("1"));
-//console.log(await authLogin("dadigwu", "he"));
-//console.log(await registerUser(" dadigwu ", "hey"))
