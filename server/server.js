@@ -153,7 +153,6 @@ server.route("/login")
     return res.status(200).json(
       {serverCheck: {"valid": "Data is valid"}}
     )
-    
   }
 })
 
