@@ -1,8 +1,9 @@
-import React from "react";
-import { Link } from "react-router";
+import React  from "react";
+import { Link, useLoaderData } from "react-router";
 import profileIcon from "../assets/images/profile-icon.svg"
 
-export default function Header() {
+export default function Header(props) {
+  
   return (
     <header>
       <Link to="." className="logo">FitTrack</Link>
@@ -10,9 +11,9 @@ export default function Header() {
       <nav>
         <Link to=".">home</Link>
         <Link to="about">about</Link>
-        <Link to="dashboard">dash</Link>
+        <Link to={`dashboard/${props.user_id}`}>dash</Link>
       </nav>
-      <Link to="/dashboard">
+      <Link to={`dashboard/${props.user_id}`}>
         <img src={profileIcon} alt="person icon" className="profile"/>
       </Link>
     </header>

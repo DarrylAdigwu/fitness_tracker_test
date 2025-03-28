@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Form, NavLink, useSubmit, useActionData, useNavigate } from "react-router";
+import React from "react";
+import { Form, NavLink, redirect, useActionData, useNavigate } from "react-router";
 import "../assets/css/account.css"
 import { sendData } from "../../client-utils";
 
@@ -7,47 +7,21 @@ import { sendData } from "../../client-utils";
 export async function action({ request }) {
   // Form data
   const formData = await request.formData();
-  const username = formData.get("username");
-  const password = formData.get("password");
-  const confirmPassword = formData.get("confirm-password");
+  const allData = Object.fromEntries(formData);
 
   // Send Form data to server 
-  const sendFormData = await sendData("register", username, password, confirmPassword);
-  
-  /**  Client side validation **/
-  const errors = {};
-  const valid = {};
-  
-  // Check input return error obj if invalid
-  if(!username) {
-    errors.invalidUsername = "Name is required!"
-    return errors;
-  }
+  const sendFormData = await sendData("register", allData);
   
   // All server side error validation responses
   if(sendFormData.serverError) {
-    errors.invalid = sendFormData.serverError
-    return errors.invalid
-  }
-
-  if(!password) {
-    errors.invalidPassword = "Password is required!"
-    return errors;
-  }
-
-  if(confirmPassword !== password) {
-    errors.invalidConfirmPass = "Password does not match!"
-    return errors;
+    return sendFormData.serverError
   }
  
   // If all valid, return valid object for page redirect
- if(username && password && confirmPassword === password) {
-   valid.success = "true";
+ if(sendFormData.serverCheck.valid) {
+   return redirect("/login");
   }
 
-  if(Object.keys(valid).length > 0) {
-    return valid;
-  };
 }
 
 /** React Component **/
@@ -58,11 +32,6 @@ export default function Register () {
 
   const key = actionData ? Object.keys(actionData) : null;
  
-  // Redirect user if validation is successful
-  if(actionData && actionData.success) {
-    return window.location.replace("/login")
-  }
-
   return(
     <div className="container register-container">
       <section className="reg-main">

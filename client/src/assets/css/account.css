@@ -49,7 +49,7 @@ Form.login-form > input {
 }
 
 Form.register-form > input,
-Form.register-form > input {
+Form.login-form > input {
   margin-top: .5rem;
   margin-bottom: .75rem;
 }

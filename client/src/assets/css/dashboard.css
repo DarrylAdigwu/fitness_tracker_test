@@ -4,7 +4,7 @@ div.dash-container {
 }
 
 /* date button */
-div.dash-container > div.date {
+div.dash-container > div.displayDate {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -17,19 +17,18 @@ div.dash-container > div.date {
   font-size: 1.5rem;
 }
 
-div.dash-container > div.date > span {
+div.dash-container > div.displayDate > span {
   margin: 0 .75rem;
   font-size: .875rem;
   color: #FFFFFF;
   min-width: fit-content;
 }
 
-div.dash-container > div.date > button {
+div.dash-container > div.displayDate > button {
   background-color: transparent;
   border: none;
   color: #FFFFFF;
   height: 100%;
-  padding: 0 .5rem;
   border-radius: 10px;
   cursor: pointer;
 }
@@ -107,28 +106,34 @@ div.workout-form input, div.workout-form button {
   font-size: .875rem;
 }
 
-div.input-boxes {
+div.inputBoxes {
   display: flex;
   width: 100%;
 }
 
-div.workout-form .workout-input {
-  width: 75%;
+div.workout-form .workoutInput {
+  width: 45%;
 }
 
-div.workout-form .rep-input {
+div.workout-form .muscleGroupInput {
+  width: 30%;
+}
+
+div.workout-form .repInput {
   width: 25%;
   margin-left: .25rem;
 }
 
 div.workout-form > Form > div.exercise-btn-container {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   margin-top: .25rem;
 }
 
-div.exercise-btn-container > div#add-exercise {
+div.exercise-btn-container > div#add-exercise,
+div.exercise-btn-container > div#remove-exercise {
   display: flex;
   align-items: center;
   justify-self: right;
@@ -140,12 +145,22 @@ div.exercise-btn-container > div#add-exercise {
   font-size: .875rem;
 }
 
-div.exercise-btn-container > div#add-exercise:hover {
+span.invalidDash {
+  width: 100%;
+  text-align: center;
+  color: #c05b5b;
+  margin: 1rem 0 .25rem 0;
+  font-size: .875rem;
+}
+
+div.exercise-btn-container > div#add-exercise:hover,
+div.exercise-btn-container > div#remove-exercise:hover {
   border-bottom: 1px solid #D98B22;
 }
 
-div.exercise-btn-container > div#add-exercise > img {
-  margin-right: .125rem;
+div.exercise-btn-container > div#add-exercise > img,
+div.exercise-btn-container > div#remove-exercise > img {
+  margin-right: .25rem;
 }
 
 

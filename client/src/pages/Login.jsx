@@ -1,60 +1,39 @@
 import React from "react";
-import { Form, NavLink, useActionData, useNavigate } from "react-router";
+import { Form, NavLink, useActionData, useNavigate, useLoaderData } from "react-router";
 import "../assets/css/account.css";
 import { sendData } from "../../client-utils";
+
+export async function loader({ request, params }) {
+  
+  
+}
 
 export async function action({ request }) {
    // Form data
    const formData = await request.formData();
+   const allData = Object.fromEntries(formData);
    const username = formData.get("username");
    const password = formData.get("password");
+ 
+  const url = new URL(request.url);
 
    // Send form data to server
-   const sendFormData = await sendData("login", username, password);
-
-   /**  Client side validation **/
-  const errors = {};
-  const valid = {};
+   const sendFormData = await sendData("login", allData, url);
   
-  // Check input return error obj if invalid
-  if(!username) {
-    errors.invalidUsername = "Name is required!"
-    return errors;
-  }
-  
-  // All server side error validation responses
-  if(sendFormData.serverError) {
-    errors.invalid = sendFormData.serverError
-    return errors.invalid
-  }
+   // All server side error validation responses
+   if(sendFormData && sendFormData.serverError) {
+     return sendFormData.serverError
+   }
 
-  if(!password) {
-    errors.invalidPassword = "Password is required!"
-    return errors;
-  }
- 
-  // If all valid, return valid object for page redirect
- if(username && password) {
-   valid.success = "true";
-  }
-
-  if(Object.keys(valid).length > 0) {
-    return valid;
-  };
 }
 
 export default function Login () {
   const actionData = useActionData();
   const navigate = useNavigate();
   const isLogging = navigate.state === 'submitting'; 
-  console.log(actionData)
+  const loader = useLoaderData();
 
   const key = actionData ? Object.keys(actionData) : null;
-
-  // Redirect user if validation is successful
-  if(actionData && actionData.success) {
-    //return window.location.replace("/login")
-  }
   
   return(
     <div className="container login-container">
@@ -70,11 +49,11 @@ export default function Login () {
           <input name="lastName" type="text" id="lastName" placeholder="Last Name" autoComplete="on"/> 
           */}
           <label htmlFor="username"/>
-          <input name="username" type="text" id="username" placeholder="Username" autoComplete="on" autoFocus  />
+          <input name="username" type="text" id="username" placeholder="Username" autoComplete="on" autoFocus required />
           {actionData && key == "invalidUsername" || key == "unauthUsername" ? <span className="invalid">{actionData[key]}</span> : null}
           
           <label htmlFor="login-password"/>
-          <input name="password" type="password" id="login-password" placeholder="Password" autoComplete="off"/>
+          <input name="password" type="password" id="login-password" placeholder="Password" autoComplete="off" required/>
           {actionData && key == "invalidPassword" || key == "unauthPassword" ? <span className="invalid">{actionData[key]}</span> : null}
 
           <button>{isLogging ? "Logging in..." : "Log in"}</button>

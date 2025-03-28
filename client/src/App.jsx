@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } from 'react-router';
+import React from 'react';
+import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, redirect} from 'react-router';
 
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
 import Register, { action as registerAction} from './pages/Register';
-import Login, { action as loginAction } from './pages/Login';
-import Error from './pages/Error';
-import Dashboard from './pages/profile/Dashboard';
-
+import Login, { loader as loginLoader, action as loginAction } from './pages/Login';
+import Error from './pages/Error'; 
+import DashboardLayout from './components/DashboardLayout';
+import Dashboard, { action as dashboardAction, loader as dashboardLoader } from './pages/profile/Dashboard';
 
 
 const router = createBrowserRouter(createRoutesFromElements(
@@ -29,19 +29,32 @@ const router = createBrowserRouter(createRoutesFromElements(
     <Route 
       path="login"
       element={<Login />}
+      loader={loginLoader}
       action={loginAction}
     />
     <Route 
-      path="dashboard"
-      element={<Dashboard />}
-    />
+      path="dashboard" 
+      element={<DashboardLayout />} 
+      >
+      <Route 
+        index
+        loader={async() => redirect(`:username`)}
+        />
+      <Route 
+        path=":username"
+        element={<Dashboard />}
+        loader={dashboardLoader}
+        action={dashboardAction}
+        />
 
-    /* Error page */
+    </Route>
+
+    {/* Error page */} 
     <Route 
       path="*"
       element={<Error />}
     />
-  </Route>
+  </Route> 
 ));
 
 export default function App() {
