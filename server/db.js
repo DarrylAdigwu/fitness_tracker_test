@@ -27,24 +27,25 @@ export async function registerUser(username, password) {
   const hash = await hashPassword(password);
   const register = await db.query(`INSERT INTO users (username, hash)
           VALUES(?, ?)`, [username, hash]);
+  return register;
 }
 
-// Get user by ID
-export async function getUserByID(id) {
+// Get user by username
+export async function getUserByUsername(username) {
   // SQL query statemt
   let getUserQuery = `SELECT id, username 
           FROM users 
-          WHERE id = ?`;
+          WHERE username = ?`;
   
   // Parameters to be added to query
-  let getUserInsert = [id];
+  let getUserInsert = [username];
   
   // Format escaped query
   getUserQuery = mysql.format(getUserQuery, getUserInsert);
   
   const [userQuery] = await db.query(getUserQuery);
 
-  return userQuery[0];
+  return userQuery[0].id;
 }
 
 // Authenticate user login 
@@ -88,4 +89,19 @@ export async function authLogin(username, password) {
     return "Password does not match";
   } 
 
+}
+
+// Store workout
+export async function storeExercise(id, username, workout, muscleGroup, reps, date) {
+  let storeExerciseQuery = `INSERT INTO workouts 
+          (user_id, user_name, exercise, muscle_group, reps, date)
+          VALUES(?, ?, ?, ?, ?, ?)`;
+  
+  let storeExerciseInsert = [id, username, workout, muscleGroup, reps, date];
+
+  storeExerciseQuery = mysql.format(storeExerciseQuery, storeExerciseInsert);
+
+  const exerciseQuery = await db.query(storeExerciseQuery);
+
+  return exerciseQuery;
 }
