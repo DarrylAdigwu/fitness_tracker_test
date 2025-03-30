@@ -3,10 +3,10 @@ import dotenv from "dotenv";
 import * as argon2 from "argon2";
 import { hashPassword } from "./utils.js";
 
-// Configure .env files
+/* Configure .env files */
 dotenv.config();
 
-// Configure Database
+/* Configure Database */
 export const db = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -22,7 +22,7 @@ export const db = mysql.createPool({
 });
 
 
-// Register user to database
+/* Register user to database */
 export async function registerUser(username, password) {
   const hash = await hashPassword(password);
   const register = await db.query(`INSERT INTO users (username, hash)
@@ -31,7 +31,7 @@ export async function registerUser(username, password) {
 }
 
 // Get user by username
-export async function getUserByUsername(username) {
+export async function getUserByUsername(username, info = "id") {
   // SQL query statemt
   let getUserQuery = `SELECT id, username 
           FROM users 
@@ -44,11 +44,21 @@ export async function getUserByUsername(username) {
   getUserQuery = mysql.format(getUserQuery, getUserInsert);
   
   const [userQuery] = await db.query(getUserQuery);
+  
+  console.log(userQuery)
+  if(!userQuery[0]) {
+    return false
+  } 
+  if(info === "username") {
+    return userQuery[0].username
+  } else {
+    return userQuery[0].id
+  }
 
-  return userQuery[0].id;
 }
 
-// Authenticate user login 
+
+/* Authenticate user login */
 export async function authLogin(username, password) {
   let hashResult;
   let findUser;
@@ -91,8 +101,36 @@ export async function authLogin(username, password) {
 
 }
 
-// Store workout
+
+/* Search for duplicate workouts */
+export async function checkWorkouts(id, username, workout, date) {
+  let checkWorkoutsQuery = `Select * FROM workouts 
+          WHERE user_id = ? 
+          AND user_name = ? 
+          AND exercise = ? 
+          AND date = ?`;
+  
+  let checkWorkoutsInsert = [id, username, workout, date];
+
+  checkWorkoutsQuery = mysql.format(checkWorkoutsQuery, checkWorkoutsInsert);
+
+  const [workoutsQuery] = await db.query(checkWorkoutsQuery);
+  if(workoutsQuery[0]) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+/* Store workout */
 export async function storeExercise(id, username, workout, muscleGroup, reps, date) {
+  // Check if entry already exists
+  if(await checkWorkouts(id, username, workout, date)) {
+    return "Workout already exists";
+  }
+
+  // Store new workouts
   let storeExerciseQuery = `INSERT INTO workouts 
           (user_id, user_name, exercise, muscle_group, reps, date)
           VALUES(?, ?, ?, ?, ?, ?)`;
@@ -104,4 +142,24 @@ export async function storeExercise(id, username, workout, muscleGroup, reps, da
   const exerciseQuery = await db.query(storeExerciseQuery);
 
   return exerciseQuery;
+}
+
+
+// Get all user workouts for the day
+export async function getUsersExercises(id, date) {
+  // Get stored workouts
+  let getWorkoutsQuery = `SELECT id, exercise, muscle_group, reps, date FROM workouts
+          WHERE user_id = ?
+          AND date =?`;
+  
+  let getWorkoutsInsert = [id, date];
+
+  getWorkoutsQuery = mysql.format(getWorkoutsQuery, getWorkoutsInsert);
+
+  const [getExercisesQuery] = await db.query(getWorkoutsQuery);
+  
+  if(getExercisesQuery.length === 0) {
+    return null
+  }
+  return getExercisesQuery;
 }
