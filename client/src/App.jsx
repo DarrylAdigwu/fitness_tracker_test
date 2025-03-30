@@ -43,6 +43,7 @@ const router = createBrowserRouter(createRoutesFromElements(
       <Route 
         path=":username"
         element={<Dashboard />}
+        hydrateFallbackElement={<React.Suspense fallback={<h2 className='loading'>Loading...</h2>}></React.Suspense>}
         loader={dashboardLoader}
         action={dashboardAction}
         />
