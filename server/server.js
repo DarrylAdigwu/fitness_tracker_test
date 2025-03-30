@@ -8,8 +8,9 @@ import cors from "cors";
 import helmet from "helmet";
 import session from "express-session";
 import MySQLStore from "express-mysql-session";
-import { db, registerUser, authLogin, getUserByUsername } from "./db.js";
-import { checkString, JWT } from "./utils.js";
+import { db, registerUser, authLogin, getUserByUsername, 
+  storeExercise, getUsersExercises } from "./db.js";
+import { checkString, JWT, formatDate } from "./utils.js";
 
 
 // Create Web App
@@ -46,7 +47,7 @@ server.use(session({
   store: sessionStore,
   rolling: true,
   cookie: {
-    httpOnly: false,
+    httpOnly: process.env.NODE_ENV === 'production' ? true : false,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     maxAge: 1000 * 60 * 60,
@@ -70,13 +71,13 @@ server.use((err, req, res, next) => {
 // Log http request
 server.use(morgan("dev"))
 
-// Landing page
+/* Landing page */
 server.route("/")
 .get(async (req, res) => {
   
 });
 
-// Register page
+/* Register Users */
 server.route("/register")
 .post(async (req, res) => {
   const allRegisterData = req.body.allData;
@@ -93,7 +94,7 @@ server.route("/register")
       });
     }
     
-    if(await checkString(username) !== null) {
+    if(checkString(username) === null) {
       return res.json({
         serverError: {"invalidChar": "Username cannot not contain special characters"}
       });
@@ -109,6 +110,12 @@ server.route("/register")
       return res.json({
         serverError: {"invalidConfirmPass": "Passwords must match"}
       });
+    }
+
+    if(await getUserByUsername(username, "username") !== false) {
+      return res.json({
+        serverError: {"invalidUsername": "Username already exists"}
+      })
     }
     
     
@@ -127,6 +134,8 @@ server.route("/register")
   }
 });
 
+
+/* Login Route/Start Session */
 server.route("/login")
 .post(async (req, res) => {
   const allLoginData = req.body.allData;
@@ -150,7 +159,7 @@ server.route("/login")
       });
     }
     
-    if(await checkString(username) !== null) {
+    if(checkString(username) === null) {
       return res.status(400).json({
         serverError: {"invalidUsername": "Invalid username"}
       });
@@ -170,7 +179,7 @@ server.route("/login")
     
     // Start session
     if(loginUser) {
-      const user_id = await getUserByUsername(username);
+      const user_id = await getUserByUsername(username, "id");
       const sessionUser = req.session.user = {
         id: user_id, 
         username: username
@@ -182,9 +191,8 @@ server.route("/login")
           return res.status(500).send("Error saving session");
         }
       })
-
       
-      const tokenID = await JWT({IDtoken: sessionUser.username}, process.env.JWT_TOKEN)
+      const tokenID = await JWT({IDtoken: sessionUser.id}, process.env.JWT_TOKEN)
     
       res.cookie("username", `${sessionUser.username}`, {
         maxAge: 1000 * 60 * 60,
@@ -209,7 +217,7 @@ server.route("/login")
       } else {
         return res.status(200).json({ 
           message: "Login successful",
-          redirectUrl: `http://localhost:5173/dashboard/${user_id}`,
+          redirectUrl: `http://localhost:5173/dashboard/${username}`,
         });
       }
     }
@@ -217,43 +225,56 @@ server.route("/login")
   }
 });
 
+
+/* Logout Route */
 server.route("/logout")
 .post(async (req, res) => {
   if(req.method === "POST") {
-    
+
   }
 })
 
+/* Check authorization */
 server.route("/authenticate")
 .get(async (req, res) => {
+  
   if(req.session.user) {
     return res.status(200).json({
       valid: "Authorized"
     })
   } else {
     return res.json({
-      invalid: "Unauthorized"
+      invalid: "Unauthorized", 
     });
   }
 });
 
-server.route("/dashboard/:id")
+
+/* Dashboard route */
+server.route("/dashboard/:username")
 .get(async (req, res) => {
   if(req.session.user) {
+    const user_id = req.session.user.id;
+    const url = new URL(`https://localhost:3000${req.url}`)
+    const date = url.searchParams.get("date");
+    const formattedDate = formatDate(date);
+
+    // Get Stored workout and return to dashboard
+    const getWorkout = await getUsersExercises(user_id, formattedDate);
     return res.status(200).json({
-      user: req.session.user
+        getWorkout,
     })
-  } else {
-    return res.json({
-      message: "Unauthorized"
-    });
   }
 })
 .post(async (req, res) => {
   const allDashboardData = req.body.allData;
-  
+  const id = req.session.user.id;
+  const username = req.session.user.username;
+  const numOfWorkouts = (Object.keys(allDashboardData).length - 1) / 3;
+  const date = allDashboardData.displayDate;
+
   if(req.method === 'POST') {
-    console.log(allDashboardData.displayDate)
+    
     // Server side validation
     for(const [key, value] of Object.entries(allDashboardData)) {
       
@@ -269,19 +290,32 @@ server.route("/dashboard/:id")
         })
       }
       
-      if(key !== "displayDate" && await checkString(value) !== null) {
+      if(key !== "displayDate" && checkString(value) === null) {
         return res.status(400).json({
           serverError: {"invalid": "Inputs cannot contain special characters or spaces"}
         })
       }
     }
+
+    const newDateFormat = formatDate(date)
+
+    // Send Workouts to database
+    for(let i = 0; i < numOfWorkouts; i++) {
+      const workout = allDashboardData[`workoutInput${i + 1}`];
+      const muscleGroup = allDashboardData[`muscleGroupInput${i + 1}`];
+      const rep = allDashboardData[`repInput${i + 1}`];
+      await storeExercise(id, username, workout, muscleGroup, rep, newDateFormat);
+    }
+
+    // Return valid message
     return res.status(200).json({
       serverCheck: {"valid": "Data is valid"}
     })
   }
 });
 
-/// Serve static files from React Vite (for build)
+
+/* Serve static files from React Vite (for build) */
 const __filename = url.fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename);
 server.use(express.static(path.join(__dirname, "../client/dist")));
