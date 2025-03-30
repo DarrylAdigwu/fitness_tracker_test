@@ -67,6 +67,88 @@ div.dash-container > div.no-schedule button:active {
   cursor: pointer;
 }
 
+/* Todays Schedule container */
+div.schedule {
+  display: flex;
+  flex-wrap: wrap;
+  width: 90%;
+  max-width: 500px;
+  min-width: 300px;
+}
+
+div.schedule > table {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-block: 1rem;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+table > thead {
+  width: 100%;
+  background-color: #1f1f1f;
+  color: #FFFAF0;
+}
+
+thead > tr.table-head-row {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+tr.table-head-row > th {
+  display: flex;
+  justify-content: space-evenly;
+  font-weight: 500;
+}
+
+tr.table-head-row > th.reps {
+  width: 20%;
+}
+/* #36454F #9F9AA4*/
+tr.table-head-row > th.exercise {
+  width: 55%;
+  border-left: 1px solid rgba(159,154,164, 1);
+  border-right: 1px solid rgba(159,154,164, 1);
+}
+
+tr.table-head-row > th.focus {
+  width: 25%;
+}
+
+table > tbody {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+ tbody > tr {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  border-top: 1px solid rgba(159,154,164, 1);
+  background-color: rgba(159,154,164, .75);
+}
+
+tbody > tr.reps-row {
+  width: 20%;
+}
+
+tbody > tr.exercise-row {
+  border-left: 1px solid rgba(159,154,164, 1);
+  border-right: 1px solid rgba(159,154,164, 1);
+  width: 55%;
+}
+
+tbody > tr.focus-row {
+  width: 25%;
+}
+
+th, tbody > tr {
+  padding: 20px 0px;
+}
+
 /* Workout form */
 div.dash-container > div.workout-form {
   display: none;

@@ -3,32 +3,34 @@ import { Form, useActionData, useLoaderData } from "react-router";
 import "../../assets/css/dashboard.css";
 import plusIcon from "../../assets/images/plusIcon.svg";
 import minusIcon from "../../assets/images/minusIcon.svg";
-import { sendData, requireAuth } from "../../../client-utils";
+import { sendData, requireAuth, getTodaysWorkout } from "../../../client-utils";
 
 export async function loader({ request }) {
-  await requireAuth(request);
+  await requireAuth(request)
+  return await getTodaysWorkout(new Date());
 }
 
 export async function action({ request }) {
   const formData = await request.formData();
   const allData = Object.fromEntries(formData);
-  const numOfEntries = (Object.keys(allData).length - 1) / 3;
 
   // Send Data to server
-  const sendFormData = await sendData("dashboard/:id", allData);
+  const sendFormData = await sendData("dashboard/:username", allData);
 
   if(sendFormData.serverError) {
-    return  sendFormData.serverError;
+    return sendFormData.serverError;
   }
 
 }
 
 /* React Component */
 export default function Dashboard() {
+  const dashLoader = useLoaderData();
+  const actionData = useActionData();
   const [exerciseCount, setExerciseCount] = React.useState(2);
   const [showDate, setShowDate] = React.useState(new Date());
-  const schedule = useLoaderData();
-  const actionData = useActionData();
+  const [plannedWorkout, setPlannedWorkout] = React.useState(dashLoader.getWorkout)
+
   
   // Get key and make it string if error in form 
   let key = actionData ? Object.keys(actionData).toString() : null;
@@ -42,7 +44,7 @@ export default function Dashboard() {
       day: "numeric",
     };
 
-    return new Intl.DateTimeFormat("en-US", options).format(date);
+    return new Intl.DateTimeFormat(undefined, options).format(date);
   }
 
   // Display previous date
@@ -63,15 +65,59 @@ export default function Dashboard() {
     });
   };
 
+
+  // Get today's workout
+  React.useEffect(() => {
+    async function loadWorkout(date) {
+      try {
+        const getExercise = await getTodaysWorkout(new Date(date));
+        setPlannedWorkout(getExercise.getWorkout)
+      } catch(err) {
+        console.error("Error:", err)
+      }
+    }
+    loadWorkout(showDate)
+  }, [showDate])
+    
+
+  const todaysSchedule = plannedWorkout ? 
+    plannedWorkout.map((workouts) => {
+      return (                                                                                                                                                                    
+        <tbody key={workouts.id}>            
+          <tr className="focus-row">
+            <td>{workouts.muscle_group}</td>
+          </tr> 
+          
+          <tr className="exercise-row">
+            <td>{workouts.exercise}</td>
+          </tr>
+          
+          <tr className="reps-row">
+            <td>{workouts.reps}</td>
+          </tr>
+        </tbody>
+      )
+    }) : null
+
+
   // Show no schedule or schedule depending on loaderData
-  const showSchedule = schedule ? 
-    <div id="workout-schedule">
-      <h1>Schedule here</h1>
+  const showSchedule = todaysSchedule ? 
+    <div className="schedule">
+      <table>
+        <thead>
+          <tr className="table-head-row">
+            <th className="focus">Focus</th>
+            <th className="exercise">Exercise</th>
+            <th className="reps">Reps</th>
+          </tr>
+        </thead>
+        {todaysSchedule}
+      </table>
     </div> :
     <div className="no-schedule" id="no-schedule">
       <h1>No workout schedule for today</h1>
       <button id="add-workout" onClick={newForm} type="button">Add workout</button>
-  </div>
+    </div>
 
 
   // Create form for new workout
@@ -206,11 +252,11 @@ export default function Dashboard() {
         <Form method="post">
           <div className="inputBoxes" id="inputBoxes1">
             <label htmlFor="displayDate"/>
-            <input className="displayDate" 
-              id="displayDate" name="displayDate" 
+            <input id="displayDate" className="displayDate" 
+               name="displayDate" 
               placeholder="" 
               type="hidden" 
-              value={showDate}
+              value={formatCurrentDate(showDate)}
             />
 
             <label htmlFor="workoutInput1"></label>
